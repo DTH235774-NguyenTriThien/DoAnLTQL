@@ -27,6 +27,9 @@ namespace QuanLyQuanCaPhe.Data
 
         public DbSet<TaiKhoan> TaiKhoan { get; set; }
 
+        public DbSet<ChamCong> ChamCong { get; set; }
+
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -355,6 +358,47 @@ namespace QuanLyQuanCaPhe.Data
                 entity.HasOne(d => d.NhanVien)
                       .WithOne(p => p.TaiKhoan)
                       .HasForeignKey<TaiKhoan>(d => d.MaNV)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<ChamCong>(entity =>
+            {
+                entity.ToTable("ChamCong");
+
+                entity.HasKey(e => e.MaCham);
+
+                entity.Property(e => e.MaCham)
+                      .ValueGeneratedNever();
+
+                entity.Property(e => e.MaNV)
+                      .HasColumnType("char(6)")
+                      .IsRequired();
+
+                entity.Property(e => e.MaCa);
+
+                entity.Property(e => e.NgayLam)
+                      .HasColumnType("date")
+                      .IsRequired();
+
+                entity.Property(e => e.ClockIn)
+                      .HasColumnType("datetime");
+
+                entity.Property(e => e.ClockOut)
+                      .HasColumnType("datetime");
+
+                entity.Property(e => e.GhiChu)
+                      .HasMaxLength(510);
+
+                // FK -> NhanVien
+                entity.HasOne(d => d.NhanVien)
+                      .WithMany(p => p.ChamCong)
+                      .HasForeignKey(d => d.MaNV)
+                      .OnDelete(DeleteBehavior.NoAction);
+
+                // FK -> CaLam
+                entity.HasOne(d => d.CaLam)
+                      .WithMany(p => p.ChamCong)
+                      .HasForeignKey(d => d.MaCa)
                       .OnDelete(DeleteBehavior.NoAction);
             });
 
