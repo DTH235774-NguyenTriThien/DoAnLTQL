@@ -29,6 +29,8 @@ namespace QuanLyQuanCaPhe.Data
 
         public DbSet<ChamCong> ChamCong { get; set; }
 
+        public DbSet<CaLam> CaLam { get; set; }
+
 
 
 
@@ -401,6 +403,26 @@ namespace QuanLyQuanCaPhe.Data
                       .HasForeignKey(d => d.MaCa)
                       .OnDelete(DeleteBehavior.NoAction);
             });
+
+            modelBuilder.Entity<CaLam>(entity =>
+            {
+                entity.ToTable("CaLam");
+
+                entity.HasKey(e => e.MaCa);
+
+                entity.Property(e => e.MaCa)
+                      .ValueGeneratedNever();
+
+                entity.Property(e => e.TenCa)
+                      .HasMaxLength(100);
+
+                entity.Property(e => e.GioBatDau)
+                      .HasColumnType("time");
+
+                entity.Property(e => e.GioKetThuc)
+                      .HasColumnType("time");
+            });
+
 
 
         }
