@@ -21,6 +21,12 @@ namespace QuanLyQuanCaPhe.Data
 
         public DbSet<NguyenLieu> NguyenLieu { get; set; }
 
+        public DbSet<KhachHang> KhachHang { get; set; }
+
+        public DbSet<NhanVien> NhanVien { get; set; }
+
+        public DbSet<TaiKhoan> TaiKhoan { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -270,6 +276,85 @@ namespace QuanLyQuanCaPhe.Data
                 entity.HasOne(d => d.HoaDon)
                       .WithMany(p => p.InventoryMovements)
                       .HasForeignKey(d => d.RefMaHD)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<KhachHang>(entity =>
+            {
+                entity.ToTable("KhachHang");
+
+                entity.HasKey(e => e.MaKH);
+
+                entity.Property(e => e.MaKH)
+                      .HasColumnType("char(6)")
+                      .IsRequired();
+
+                entity.Property(e => e.TenKH)
+                      .HasMaxLength(200);
+
+                entity.Property(e => e.SDT)
+                      .HasMaxLength(30);
+
+                entity.Property(e => e.DiemTichLuy)
+                      .HasDefaultValue(0);
+            });
+
+            modelBuilder.Entity<NhanVien>(entity =>
+            {
+                entity.ToTable("NhanVien");
+
+                entity.HasKey(e => e.MaNV);
+
+                entity.Property(e => e.MaNV)
+                      .HasColumnType("char(6)")
+                      .IsRequired();
+
+                entity.Property(e => e.HoTen)
+                      .HasMaxLength(200);
+
+                entity.Property(e => e.GioiTinh)
+                      .HasMaxLength(20);
+
+                entity.Property(e => e.ChucVu)
+                      .HasMaxLength(100);
+
+                entity.Property(e => e.LuongCoBan)
+                      .HasColumnType("decimal(12,2)")
+                      .HasDefaultValue(0);
+
+                entity.Property(e => e.TrangThai)
+                      .HasMaxLength(40)
+                      .HasDefaultValue("Đang làm");
+            });
+
+            modelBuilder.Entity<TaiKhoan>(entity =>
+            {
+                entity.ToTable("TaiKhoan");
+
+                entity.HasKey(e => e.TenDangNhap);
+
+                entity.Property(e => e.TenDangNhap)
+                      .HasMaxLength(100)
+                      .IsRequired();
+
+                entity.Property(e => e.MatKhauHash)
+                      .HasMaxLength(512)
+                      .IsRequired();
+
+                entity.Property(e => e.Role)
+                      .HasMaxLength(40)
+                      .HasDefaultValue("Nhân viên");
+
+                entity.Property(e => e.MaNV)
+                      .HasColumnType("char(6)");
+
+                entity.Property(e => e.CreatedAt)
+                      .HasDefaultValueSql("getdate()");
+
+                // FK -> NhanVien (1 - 1)
+                entity.HasOne(d => d.NhanVien)
+                      .WithOne(p => p.TaiKhoan)
+                      .HasForeignKey<TaiKhoan>(d => d.MaNV)
                       .OnDelete(DeleteBehavior.NoAction);
             });
 
