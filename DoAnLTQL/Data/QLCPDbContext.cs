@@ -16,28 +16,19 @@ namespace QuanLyQuanCaPhe.Data
         public DbSet<HoaDon> HoaDon { get; set; }
         public DbSet<ChiTietHoaDon> ChiTietHoaDon { get; set; }
         public DbSet<SanPham> SanPham { get; set; }
-
         public DbSet<CongThuc> CongThuc { get; set; }
-
         public DbSet<NguyenLieu> NguyenLieu { get; set; }
-
         public DbSet<KhachHang> KhachHang { get; set; }
-
         public DbSet<NhanVien> NhanVien { get; set; }
-
         public DbSet<TaiKhoan> TaiKhoan { get; set; }
-
         public DbSet<ChamCong> ChamCong { get; set; }
-
         public DbSet<CaLam> CaLam { get; set; }
-
-
-
+        public DbSet<BangLuong> BangLuong { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(
-                ConfigurationManager.ConnectionStrings["QLCafeConnection"].ConnectionString
+                ConfigurationManager.ConnectionStrings["QLCPConnection"].ConnectionString
             );
         }
 
@@ -86,10 +77,12 @@ namespace QuanLyQuanCaPhe.Data
 
                 entity.Property(e => e.TongTien)
                       .HasColumnType("decimal(12,2)")
-                      .HasDefaultValue(0);
+                      .HasDefaultValue(0m);
+
 
                 entity.Property(e => e.GiamGia)
-                      .HasColumnType("decimal(18,2)");
+                      .HasColumnType("decimal(18,2)")
+                      .HasDefaultValue(0m);
 
                 entity.Property(e => e.TrangThai)
                       .HasMaxLength(40)
@@ -242,7 +235,7 @@ namespace QuanLyQuanCaPhe.Data
 
                 entity.Property(e => e.SoLuongTon)
                       .HasColumnType("decimal(12,3)")
-                      .HasDefaultValue(0);
+                      .HasDefaultValue(0m);
             });
 
             modelBuilder.Entity<InventoryMovements>(entity =>
@@ -325,7 +318,7 @@ namespace QuanLyQuanCaPhe.Data
 
                 entity.Property(e => e.LuongCoBan)
                       .HasColumnType("decimal(12,2)")
-                      .HasDefaultValue(0);
+                      .HasDefaultValue(0m);
 
                 entity.Property(e => e.TrangThai)
                       .HasMaxLength(40)
@@ -423,6 +416,43 @@ namespace QuanLyQuanCaPhe.Data
                       .HasColumnType("time");
             });
 
+            modelBuilder.Entity<BangLuong>(entity =>
+            {
+                entity.ToTable("BangLuong");
+
+                entity.HasKey(e => e.MaLuong);
+
+                entity.Property(e => e.MaLuong)
+                      .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.MaNV)
+                      .HasColumnType("char(6)")
+                      .IsRequired();
+
+                entity.Property(e => e.Thang)
+                      .IsRequired();
+
+                entity.Property(e => e.Nam)
+                      .IsRequired();
+
+                entity.Property(e => e.TongGio)
+                      .HasColumnType("decimal(10,2)")
+                      .HasDefaultValue(0m);
+
+                entity.Property(e => e.LuongThucTe)
+                      .HasColumnType("decimal(12,2)")
+                      .HasDefaultValue(0m);
+
+                entity.Property(e => e.TrangThai)
+                      .HasMaxLength(40)
+                      .HasDefaultValue("Chưa trả");
+
+                // FK -> NhanVien
+                entity.HasOne(d => d.NhanVien)
+                      .WithMany(p => p.BangLuong)
+                      .HasForeignKey(d => d.MaNV)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
 
 
         }
